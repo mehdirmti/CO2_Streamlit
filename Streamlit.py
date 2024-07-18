@@ -26,21 +26,21 @@ if page == pages[0] :
 
 if page == pages[1] : 
     st.write("### Exploration")
-    st.write("### Head of the data:")
-    st.dataframe(df.head(10))
+    # st.write("### Head of the data:")
+    # st.dataframe(df.head(10))
     
-    st.write("### Shape of the data:")
-    st.write(df.shape)
+    # st.write("### Shape of the data:")
+    # st.write(df.shape)
     
-    st.write("### Description of the data:")
-    st.dataframe(df.describe())
+    # st.write("### Description of the data:")
+    # st.dataframe(df.describe())
 
-    st.write("### Check existing of NaN data:")
-    if st.checkbox("Show NA") :
-        st.dataframe(df.isna().sum())
+    # st.write("### Check existing of NaN data:")
+    # if st.checkbox("Show NA") :
+    #     st.dataframe(df.isna().sum())
     
-    st.write("### Check data Types for different columns:")
-    st.dataframe(df.dtypes)
+    # st.write("### Check data Types for different columns:")
+    # st.dataframe(df.dtypes)
 
 if page == pages[2] : 
     st.write("### Preprocessing")

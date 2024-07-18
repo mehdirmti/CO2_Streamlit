@@ -59,11 +59,9 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-from csv_spliter import split_csv, write_csv
-
 # Reading data
 print("Reading the data is started!")
-df = pd.read_csv("data_preprocessed.csv",index_col=0)
+df = pd.read_csv("data_preprocessed-1.csv",index_col=0)
 print("df length (Should be 3496097):",len(df))
 
 """# **Encoding Target**"""

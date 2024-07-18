@@ -3,13 +3,31 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+import joblib
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.metrics import classification_report, f1_score, accuracy_score, mean_squared_error, r2_score, confusion_matrix
 
 #read data
-for i in range(1, 11):
-    if i == 1:
-        df=pd.read_csv('data_preprocessed-{}.csv'.format(str(i)))
-    else:
-        df = pd.concat([df, pd.read_csv('data_preprocessed-{}.csv'.format(str(i)))], axis=0)
+# for i in range(1, 11):
+#     if i == 1:
+#         df=pd.read_csv('data_preprocessed-{}.csv'.format(str(i)))
+#     else:
+#         df = pd.concat([df, pd.read_csv('data_preprocessed-{}.csv'.format(str(i)))], axis=0)
+
+# to avoid heavy file
+X_test = pd.read_csv('X_test.csv', index_col=0)
+y_test_reg = pd.read_csv('y_test_reg.csv', index_col=0)
+y_test_clf = pd.read_csv('y_test_clf.csv', index_col=0)
+
+# Scaling data (only numerical features)
+numerical_features = ["m (kg)","ep (KW)","Erwltp (g/km)","Fuel consumption"]
+scaler = joblib.load("scaler")
+X_test[numerical_features] = scaler.transform(X_test[numerical_features])
+
+
+
+# Streamlit
 
 st.title("CO2 emissions by vehicles")
 st.sidebar.title("Table of contents")
@@ -27,106 +45,126 @@ if page == pages[0] :
 if page == pages[1] : 
     st.write("### Exploration")
     st.write("### Head of the data:")
-    st.dataframe(df.head(10))
+    st.dataframe(X_test.head(10))
     
     st.write("### Shape of the data:")
-    st.write(df.shape)
+    st.write(X_test.shape)
     
     st.write("### Description of the data:")
-    st.dataframe(df.describe())
+    st.dataframe(X_test.describe())
 
     st.write("### Check existing of NaN data:")
     if st.checkbox("Show NA") :
-        st.dataframe(df.isna().sum())
+        st.dataframe(X_test.isna().sum())
     
     st.write("### Check data Types for different columns:")
-    st.dataframe(df.dtypes)
+    st.dataframe(X_test.dtypes)
 
 if page == pages[2] : 
     st.write("### Preprocessing")
     fig = plt.figure()
-    sns.countplot(x = 'Survived', data = df)
+    sns.countplot(x = 'target_clf', data = X_test)
+    plt.xlabel("Ewltp (g/km)")
+    plt.title("Distribution of the CO2 emissions of registered cars")
     st.pyplot(fig)
 
     fig = plt.figure()
-    sns.countplot(x = 'Sex', data = df)
-    plt.title("Distribution of the passengers gender")
+    sns.histplot(x = 'Fuel consumption', data = X_test, bins='auto')
+    plt.title("Distribution of Fuel consumption of registered cars")
+    plt.tight_layout()
     st.pyplot(fig)
 
-    fig = plt.figure()
-    sns.countplot(x = 'Pclass', data = df)
-    plt.title("Distribution of the passengers class")
-    st.pyplot(fig)
+    # fig = plt.figure()
+    # sns.countplot(x = 'Pclass', data = df)
+    # plt.title("Distribution of the passengers class")
+    # st.pyplot(fig)
 
-    fig = sns.displot(x = 'Age', data = df)
-    plt.title("Distribution of the passengers age")
-    st.pyplot(fig)
+    # fig = sns.displot(x = 'Age', data = df)
+    # plt.title("Distribution of the passengers age")
+    # st.pyplot(fig)
 
-    fig = plt.figure()
-    sns.countplot(x = 'Survived', hue='Sex', data = df)
-    st.pyplot(fig)
+    # fig = plt.figure()
+    # sns.countplot(x = 'Survived', hue='Sex', data = df)
+    # st.pyplot(fig)
 
-    fig = sns.catplot(x='Pclass', y='Survived', data=df, kind='point')
-    st.pyplot(fig)
+    # fig = sns.catplot(x='Pclass', y='Survived', data=df, kind='point')
+    # st.pyplot(fig)
 
-    fig = sns.lmplot(x='Age', y='Survived', hue="Pclass", data=df)
-    st.pyplot(fig)
+    # fig = sns.lmplot(x='Age', y='Survived', hue="Pclass", data=df)
+    # st.pyplot(fig)
 
 
-if page == pages[3] : 
+if page == pages[3] :
     st.write("### Modelling")
-    df = df.drop(['PassengerId', 'Name', 'Ticket', 'Cabin'], axis=1)
-    y = df['Survived']
-    X_cat = df[['Pclass', 'Sex',  'Embarked']]
-    X_num = df[['Age', 'Fare', 'SibSp', 'Parch']]
-
-    for col in X_cat.columns:
-        X_cat[col] = X_cat[col].fillna(X_cat[col].mode()[0])
-    for col in X_num.columns:
-        X_num[col] = X_num[col].fillna(X_num[col].median())
-
-    X_cat_scaled = pd.get_dummies(X_cat, columns=X_cat.columns)
-    X = pd.concat([X_cat_scaled, X_num], axis = 1)
-
-    from sklearn.model_selection import train_test_split
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=123)
-
-    from sklearn.preprocessing import StandardScaler
-    scaler = StandardScaler()
-    X_train[X_num.columns] = scaler.fit_transform(X_train[X_num.columns])
-    X_test[X_num.columns] = scaler.transform(X_test[X_num.columns])
-
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.svm import SVC
-    from sklearn.linear_model import LogisticRegression
-    from sklearn.metrics import confusion_matrix
-    import joblib
-
-    def prediction(classifier):
-        if classifier == 'Random Forest':
-            clf = joblib.load("RF")
-        elif classifier == 'SVC':
-            clf = joblib.load("SVC")
-        elif classifier == 'Logistic Regression':
-            clf = joblib.load("LR")
-        return clf
+    subpages=["Classification", "Regression", "Neural Networks"]
+    subpage=st.sidebar.radio("Choose Modelling Type:", subpages) 
     
-    def scores(clf, choice):
-        if choice == 'Accuracy':
-            return clf.score(X_test, y_test)
-        elif choice == 'Confusion matrix':
-            return confusion_matrix(y_test, clf.predict(X_test))
-    
-    choice = ['Random Forest', 'SVC', 'Logistic Regression']
-    option = st.selectbox('Choice of the model', choice)
-    st.write('The chosen model is :', option)
+    if subpage == subpages[0]:
+        st.write("### Classification")
+        def predictor(classifier):
+            if classifier == 'Decision Tree':
+                clf = joblib.load("Models/Classification/DecisionTreeClassifier.sav")
+            elif classifier == 'KNeighbors':
+                clf = joblib.load("Models/Classification/KNeighborsClassifier.sav")
+            elif classifier == 'Logistic Regression':
+                clf = joblib.load("Models/Classification/LogisticRegression.sav")
+            elif classifier == 'XGBoost':
+                clf = joblib.load("Models/Classification/XGBClassifier.sav")
+            return clf
 
-    clf = prediction(option)
-    display = st.radio('What do you want to show ?', ('Accuracy', 'Confusion matrix'))
-    if display == 'Accuracy':
-        st.write(scores(clf, display))
-    elif display == 'Confusion matrix':
-        st.dataframe(scores(clf, display))
+        
+        def scores(clf, choice):
+            if choice == 'Accuracy':
+                return clf.score(X_test, y_test_clf)
+            elif choice == 'Confusion matrix':
+                return confusion_matrix(y_test_clf, clf.predict(X_test))
+
+
+        choice = ['Decision Tree', 'KNeighbors', 'Logistic Regression', 'XGBoost']
+        option = st.selectbox('Choose the model', choice)
+        st.write('The chosen model is :', option)
+
+        clf = predictor(option)
+        display = st.radio('What do you want to show ?', ('Accuracy', 'Confusion matrix'))
+        if display == 'Accuracy':
+            st.write(scores(clf, display))
+        elif display == 'Confusion matrix':
+            st.dataframe(scores(clf, display))
+
+    if subpage == subpages[1]:
+        st.write("### Regression")
+
+        def regressor(classifier):
+            if classifier == 'Decision Tree':
+                reg = joblib.load("Models/Regression/DecisionTreeRegressor.sav")
+            elif classifier == 'Elastic Net':
+                reg = joblib.load("Models/Regression/ElasticNet.sav")
+            elif classifier == 'Linear Regression':
+                reg = joblib.load("Models/Regression/LinearRegression.sav")
+            elif classifier == 'XGBoost':
+                reg = joblib.load("Models/Regression/XGBRegressor.sav")
+            return reg
+        
+        def scores(reg, choice):
+            if choice == 'Accuracy':
+                return reg.score(X_test, y_test_reg)
+            elif choice == 'RMSE':
+                y_test_pred = reg.predict(X_test)
+                return np.sqrt(mean_squared_error(y_test_reg, y_test_pred))
+
+        choice = ['Decision Tree', 'Elastic Net', 'Linear Regression', 'XGBoost']
+        option = st.selectbox('Choose the model', choice)
+        st.write('The chosen model is :', option)
+
+        reg = regressor(option)
+        display = st.radio('What do you want to show ?', ('Accuracy', 'RMSE'))
+        if display == 'Accuracy':
+            st.write(scores(reg, display))
+        elif display == 'RMSE':
+            st.write(scores(reg, display))
+
+    if subpage == subpages[2]:
+        st.write("### Neural Networks")
 
 if page == pages[4] : 
     st.write("### Optimization")

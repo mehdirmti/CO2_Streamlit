@@ -97,22 +97,23 @@ X_train, X_test, y_train_reg, y_test_reg, y_train_clf, y_test_clf = train_test_s
                                                                                      random_state=42)
 
 # Storing data
+X_test.columns = df.drop(["target", "target_clf"], axis=1).columns
+y_test_reg.columns = "target"
+y_test_clf.columns = "target_clf"
 
 # X_train.to_csv("X_train.csv")
-# X_test.to_csv("X_test.csv")
+X_test.to_csv("X_test.csv")
 # X_valid.to_csv("X_valid.csv")
 
 # y_train_reg.to_csv("y_train_reg.csv")
-# y_test_reg.to_csv("y_test_reg.csv")
+y_test_reg.to_csv("y_test_reg.csv")
 # y_valid_reg.to_csv("y_valid_reg.csv")
 
 # y_train_clf.to_csv("y_train_clf.csv")
-# y_test_clf.to_csv("y_test_clf.csv")
+y_test_clf.to_csv("y_test_clf.csv")
 # y_valid_clf.to_csv("y_valid_clf.csv")
 
-split_csv('X_train.csv', len(X_train))
 
-split_csv('X_test.csv', len(X_test))
 
 """# **Data normalization**"""
 
@@ -122,6 +123,8 @@ scaler = StandardScaler()
 X_train[numerical_features] = scaler.fit_transform(X_train[numerical_features])
 X_test[numerical_features] = scaler.transform(X_test[numerical_features])
 X_valid[numerical_features] = scaler.transform(X_valid[numerical_features])
+
+joblib.dump(scaler, 'scaler')
 
 """# **Models for Regression**"""
 

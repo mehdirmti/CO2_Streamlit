@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-df=pd.read_csv("data_preprocessed.csv")
+df=pd.read_csv("data_preprocessed-1.csv")
 
 st.title("CO2 emissions by vehicles")
 st.sidebar.title("Table of contents")

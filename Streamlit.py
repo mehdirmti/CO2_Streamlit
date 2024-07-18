@@ -10,10 +10,11 @@ for i in range(1, 11):
         df=pd.read_csv("data_preprocessed-{}.csv".format(i))
     else:
         df = pd.concat([df, pd.read_csv("data_preprocessed-{}.csv".format(i))], axis=0)
-print("df length (Should be 3496097):",len(df))
 
 st.title("CO2 emissions by vehicles")
 st.sidebar.title("Table of contents")
+
+
 pages=["Home", "Exploration", "Preprocessing", "Modelling", "Optimization", "Interpretation"]
 page=st.sidebar.radio("Go to", pages)
 

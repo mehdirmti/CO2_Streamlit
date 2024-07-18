@@ -4,7 +4,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-df=pd.read_csv("data_preprocessed-1.csv")
+#read data
+for i in range(1, 11):
+    if i == 1:
+        df=pd.read_csv("data_preprocessed-{}.csv".format(i))
+    else:
+        df = pd.concat([df, pd.read_csv("data_preprocessed-{}.csv".format(i))], axis=0)
+print("df length (Should be 3496097):",len(df))
 
 st.title("CO2 emissions by vehicles")
 st.sidebar.title("Table of contents")
@@ -18,18 +24,25 @@ if page == pages[0] :
     st.write("Scope: We will use the dataset “Monitoring of CO2 emissions from passenger cars” of 2021, distributed by the European Environment Agency. The data is discussed in the Data Audit File.")
 
 if page == pages[1] : 
-    st.write("### Presentation of data")
+    st.write("### Exploration")
+    st.write("## Head of the data:")
     st.dataframe(df.head(10))
+    
+    st.write("## Shape of the data:")
     st.write(df.shape)
+    
+    st.write("## Description of the data:")
     st.dataframe(df.describe())
 
+    st.write("## Check existing of NaN data:")
     if st.checkbox("Show NA") :
         st.dataframe(df.isna().sum())
     
+    st.write("## Check data Types for different columns:")
     st.dataframe(df.dtypes)
 
 if page == pages[2] : 
-    st.write("### DataVizualization")
+    st.write("### Preprocessing")
     fig = plt.figure()
     sns.countplot(x = 'Survived', data = df)
     st.pyplot(fig)
@@ -59,7 +72,7 @@ if page == pages[2] :
     st.pyplot(fig)
 
 
-if page == pages[2] : 
+if page == pages[3] : 
     st.write("### Modelling")
     df = df.drop(['PassengerId', 'Name', 'Ticket', 'Cabin'], axis=1)
     y = df['Survived']
@@ -113,3 +126,10 @@ if page == pages[2] :
         st.write(scores(clf, display))
     elif display == 'Confusion matrix':
         st.dataframe(scores(clf, display))
+
+if page == pages[4] : 
+    st.write("### Optimization")
+
+
+if page == pages[5] : 
+    st.write("### Interpretation")

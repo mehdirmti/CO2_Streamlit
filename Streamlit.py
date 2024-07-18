@@ -4,14 +4,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-df=pd.read_csv("train.csv")
+df=pd.read_csv("data_preprocessed.csv")
 
-st.title("Titanic : binary classification project")
+st.title("CO2 emissions by vehicles")
 st.sidebar.title("Table of contents")
-pages=["Exploration", "DataVizualization", "Modelling"]
+pages=["Home", "Exploration", "Preprocessing", "Modelling", "Optimization", "Interpretation"]
 page=st.sidebar.radio("Go to", pages)
 
 if page == pages[0] : 
+    st.write("### Home")
+    st.write("Title of Project: CO2 emissions by vehicles")
+    st.write("Objective: We aim to identify the vehicles with the most CO2 emissions and find the cars contributing the most to air pollution.")
+    st.write("Scope: We will use the dataset “Monitoring of CO2 emissions from passenger cars” of 2021, distributed by the European Environment Agency. The data is discussed in the Data Audit File.")
+
+if page == pages[1] : 
     st.write("### Presentation of data")
     st.dataframe(df.head(10))
     st.write(df.shape)
@@ -22,7 +28,7 @@ if page == pages[0] :
     
     st.dataframe(df.dtypes)
 
-if page == pages[1] : 
+if page == pages[2] : 
     st.write("### DataVizualization")
     fig = plt.figure()
     sns.countplot(x = 'Survived', data = df)

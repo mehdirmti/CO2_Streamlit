@@ -7,9 +7,9 @@ import seaborn as sns
 #read data
 for i in range(1, 11):
     if i == 1:
-        df=pd.read_csv("data_preprocessed-{}.csv".format(i))
+        df=pd.read_csv("data_preprocessed-{}.csv".format(str(i)))
     else:
-        df = pd.concat([df, pd.read_csv("data_preprocessed-{}.csv".format(i))], axis=0)
+        df = pd.concat([df, pd.read_csv("data_preprocessed-{}.csv".format(str(i)))], axis=0)
 
 st.title("CO2 emissions by vehicles")
 st.sidebar.title("Table of contents")
@@ -26,21 +26,21 @@ if page == pages[0] :
 
 if page == pages[1] : 
     st.write("### Exploration")
-    # st.write("### Head of the data:")
-    # st.dataframe(df.head(10))
+    st.write("### Head of the data:")
+    st.dataframe(df.head(10))
     
-    # st.write("### Shape of the data:")
-    # st.write(df.shape)
+    st.write("### Shape of the data:")
+    st.write(df.shape)
     
-    # st.write("### Description of the data:")
-    # st.dataframe(df.describe())
+    st.write("### Description of the data:")
+    st.dataframe(df.describe())
 
-    # st.write("### Check existing of NaN data:")
-    # if st.checkbox("Show NA") :
-    #     st.dataframe(df.isna().sum())
+    st.write("### Check existing of NaN data:")
+    if st.checkbox("Show NA") :
+        st.dataframe(df.isna().sum())
     
-    # st.write("### Check data Types for different columns:")
-    # st.dataframe(df.dtypes)
+    st.write("### Check data Types for different columns:")
+    st.dataframe(df.dtypes)
 
 if page == pages[2] : 
     st.write("### Preprocessing")

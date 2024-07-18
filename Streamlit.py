@@ -7,9 +7,9 @@ import seaborn as sns
 #read data
 for i in range(1, 11):
     if i == 1:
-        df=pd.read_csv("data_preprocessed-{}.csv".format(str(i)))
+        df=pd.read_csv('data_preprocessed-{}.csv'.format(str(i)))
     else:
-        df = pd.concat([df, pd.read_csv("data_preprocessed-{}.csv".format(str(i)))], axis=0)
+        df = pd.concat([df, pd.read_csv('data_preprocessed-{}.csv'.format(str(i)))], axis=0)
 
 st.title("CO2 emissions by vehicles")
 st.sidebar.title("Table of contents")
